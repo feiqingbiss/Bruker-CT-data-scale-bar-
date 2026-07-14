@@ -101,7 +101,7 @@ body{ background:#F0F0F0; font-family: sans-serif; margin:0; padding:10px; }
 			<input type="number" class="dpi-num num_10n" step="any" onchange="onDpiNumChange();">
 			<br>
 			<label>单位
-				<select class="show-unit" onchange="onControlChange();">
+				<select class="show-unit" onchange="onUnitChange();">
 					<option value="9">nm</option>
 					<option value="6" selected>μm</option>
 					<option value="3">mm</option>
@@ -490,6 +490,42 @@ function onDpiNumChange(){
 		loadControlsFromPic(picsa[currentIndex]);
 		drawMain();
 	}
+}
+
+function onUnitChange(){
+    if(picsa.length === 0) return;
+    var dom = getControlDom();
+    var unit = parseInt(dom.showUnit.value);
+    // 根据单位推荐小数位数（仅在当前为0时自动调整，以尊重用户手动修改）
+    var recommendedDigits = 0;
+    switch(unit){
+        case 9: // nm
+            recommendedDigits = 0;
+            break;
+        case 6: // μm
+            recommendedDigits = 0;
+            break;
+        case 3: // mm
+            recommendedDigits = 1;
+            break;
+        case 2: // cm
+            recommendedDigits = 2;
+            break;
+        case 0: // m
+            recommendedDigits = 4;
+            break;
+        default: recommendedDigits = 0;
+    }
+    // 如果当前小数位数为0（默认值），则自动调整为推荐值
+    if(parseInt(dom.decimalDigits.value) === 0){
+        dom.decimalDigits.value = recommendedDigits;
+    }
+    // 应用设置到所有图片并重绘
+    applySettingsToAll();
+    if(currentIndex >= 0){
+        loadControlsFromPic(picsa[currentIndex]);
+        drawMain();
+    }
 }
 
 function setPresetLength(btn, um){
