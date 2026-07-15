@@ -496,7 +496,7 @@ function onUnitChange(){
     if(picsa.length === 0) return;
     var dom = getControlDom();
     var unit = parseInt(dom.showUnit.value);
-    // 根据单位推荐小数位数（仅在当前为0时自动调整，以尊重用户手动修改）
+    // 根据单位推荐小数位数（每次切换都会自动设置）
     var recommendedDigits = 0;
     switch(unit){
         case 9: // nm
@@ -516,10 +516,8 @@ function onUnitChange(){
             break;
         default: recommendedDigits = 0;
     }
-    // 如果当前小数位数为0（默认值），则自动调整为推荐值
-    if(parseInt(dom.decimalDigits.value) === 0){
-        dom.decimalDigits.value = recommendedDigits;
-    }
+    // 直接设置推荐小数位数（覆盖用户手动修改）
+    dom.decimalDigits.value = recommendedDigits;
     // 应用设置到所有图片并重绘
     applySettingsToAll();
     if(currentIndex >= 0){
